@@ -536,3 +536,7 @@ if (process.env.NODE_ENV === "production") {
       console.error("Error deleting webhook:", error);
     });
 }
+
+bot.on("text", (ctx) => {
+  console.log("Received message:", ctx.message.text);
+});
