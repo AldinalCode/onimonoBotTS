@@ -501,3 +501,24 @@ bot.on("document", async (ctx) => {
 bot.launch().then(() => {
   console.log("Bot is running...");
 });
+
+export default async (req: VercelRequest, res: VercelResponse) => {
+  if (req.method !== "POST") {
+    res.status(405).send("Method Not Allowed");
+    return;
+  }
+
+  try {
+    await bot.handleUpdate(req.body); // Handle update dari Telegram
+    res.status(200).send("OK");
+  } catch (error) {
+    console.error("Error handling update:", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+const webhookUrl = `https://${process.env.VERCEL_URL}/api`;
+
+bot.telegram.setWebhook(webhookUrl).then(() => {
+  console.log(`Webhook set to ${webhookUrl}`);
+});
