@@ -503,39 +503,23 @@ bot.launch().then(() => {
 });
 
 export default async (req: VercelRequest, res: VercelResponse) => {
+  console.log("Request received:", req.method, req.body);
+
   if (req.method !== "POST") {
+    console.log("Invalid method:", req.method);
     res.status(405).send("Method Not Allowed");
     return;
   }
 
   try {
     await bot.handleUpdate(req.body); // Handle update dari Telegram
+    console.log("Update handled successfully");
     res.status(200).send("OK");
   } catch (error) {
     console.error("Error handling update:", error);
     res.status(500).send("Internal Server Error");
   }
 };
-
-if (process.env.NODE_ENV === "production") {
-  const webhookUrl = `https://${process.env.VERCEL_URL}/api`;
-
-  bot.telegram
-    .deleteWebhook()
-    .then(() => {
-      bot.telegram
-        .setWebhook(webhookUrl)
-        .then(() => {
-          console.log(`Webhook set to ${webhookUrl}`);
-        })
-        .catch((error) => {
-          console.error("Error setting webhook:", error);
-        });
-    })
-    .catch((error) => {
-      console.error("Error deleting webhook:", error);
-    });
-}
 
 bot.on("text", (ctx) => {
   console.log("Received message:", ctx.message.text);
