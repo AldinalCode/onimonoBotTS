@@ -517,8 +517,22 @@ export default async (req: VercelRequest, res: VercelResponse) => {
   }
 };
 
-const webhookUrl = `https://${process.env.VERCEL_URL}/api`;
+if (process.env.NODE_ENV === "production") {
+  const webhookUrl = `https://${process.env.VERCEL_URL}/api`;
 
-bot.telegram.setWebhook(webhookUrl).then(() => {
-  console.log(`Webhook set to ${webhookUrl}`);
-});
+  bot.telegram
+    .deleteWebhook()
+    .then(() => {
+      bot.telegram
+        .setWebhook(webhookUrl)
+        .then(() => {
+          console.log(`Webhook set to ${webhookUrl}`);
+        })
+        .catch((error) => {
+          console.error("Error setting webhook:", error);
+        });
+    })
+    .catch((error) => {
+      console.error("Error deleting webhook:", error);
+    });
+}
