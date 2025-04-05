@@ -232,7 +232,7 @@ export const exportFileCommand = async (ctx: Context) => {
         file_id: file.file_id,
         file_link: file.url_file,
         short_link: file.shorted_url,
-        html_link: `<div><a href="${file.short_link}" target="_blank">${file.file_name}</a></div>`,
+        html_link: `<div><a href="${file.shorted_url}" target="_blank">${file.file_name}</a></div>`,
       });
     });
 
