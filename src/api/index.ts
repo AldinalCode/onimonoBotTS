@@ -12,9 +12,9 @@ bot.use(getUserRole);
 registerCommands(bot);
 
 // Jalankan bot
-// bot.launch().then(() => {
-//   console.log("Bot is running...");
-// });
+bot.launch().then(() => {
+  console.log("Bot is running...");
+});
 
 export default async (req: VercelRequest, res: VercelResponse) => {
   console.log("Request received:", req.method, req.body);

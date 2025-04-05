@@ -1,8 +1,7 @@
 import { Context } from "telegraf";
 import { supabase } from "../../lib/supabase";
-import { format } from "date-fns";
-import { id as localeId } from "date-fns/locale";
 import { safelinku } from "../../lib/safelinku";
+import { formatDateDay } from "../../lib/date";
 
 export const documentCommand = async (ctx: Context) => {
   try {
@@ -33,15 +32,13 @@ export const documentCommand = async (ctx: Context) => {
       .eq("file_id", fileId)
       .single();
 
-    // Format the date to Indonesian locale
-    const formattedDate = format(
-      new Date(file.created_at),
-      "EEEE, dd MMMM yyyy HH:mm:ss",
-      { locale: localeId }
-    );
+    let formattedDate: string = "";
 
     // If file is found, send the existing
     if (file) {
+      // Format the date to Indonesian locale
+      formattedDate = formatDateDay(file.created_at);
+
       await ctx.reply(
         `
 📂 *File Sudah Ada di Database* 📂
@@ -69,7 +66,9 @@ export const documentCommand = async (ctx: Context) => {
           .toUpperCase()
       ).join("");
 
-      const fileCode = `${fileName.split(".")[0]}-${randomHex}`;
+      const fileBaseName =
+        fileName.substring(0, fileName.lastIndexOf(".")) || fileName; // Ambil nama file sebelum titik terakhir
+      const fileCode = `${fileBaseName}-${randomHex}`;
 
       // replace space with %20
       const fileNameEncoded = encodeURIComponent(fileCode);
@@ -90,9 +89,6 @@ export const documentCommand = async (ctx: Context) => {
         ])
         .single();
 
-      console.log("insertFile", insertFile);
-      console.log("insertError", insertError);
-
       if (insertError) {
         console.error("Error inserting file:", insertError);
         await ctx.reply("Terjadi kesalahan saat menyimpan file ke database.");
@@ -103,7 +99,6 @@ export const documentCommand = async (ctx: Context) => {
         `
 ✅ *File Berhasil Disimpan ke Database* ✅
 
-🗓️ *Tanggal*: ${formattedDate}
 📂 *File Name*: \`${fileName}\`
 🔑 *File Code*: \`${fileCode}\`
 🆔 *File ID*: \`${fileId}\`

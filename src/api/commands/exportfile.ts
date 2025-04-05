@@ -1,9 +1,10 @@
 import { Context } from "telegraf";
-import { format, set } from "date-fns";
+import { format, formatDate, set } from "date-fns";
 import { id as localeId } from "date-fns/locale";
 import ExcelJS from "exceljs";
 
 import { supabase } from "../../lib/supabase";
+import { formatDateDay, formatDateEnd, formatDateStart } from "../../lib/date";
 
 export const exportFileCommand = async (ctx: Context) => {
   try {
@@ -21,8 +22,6 @@ export const exportFileCommand = async (ctx: Context) => {
     // Check if format is correct
     const args =
       ctx.message && "text" in ctx.message ? ctx.message.text.split(" ") : [];
-
-    console.log(args);
 
     type FilterCondition =
       | { type: "all" }
@@ -60,17 +59,9 @@ export const exportFileCommand = async (ctx: Context) => {
         }
 
         // startDate 00:00:00 and endDate 23:59:59 to locale id-ID
-        startDate = format(
-          set(new Date(args[2]), { hours: 0, minutes: 0, seconds: 0 }),
-          "yyyy-MM-dd'T'HH:mm:ss.SSSxxx",
-          { locale: localeId }
-        );
+        startDate = formatDateStart(args[2]);
 
-        endDate = format(
-          set(new Date(args[2]), { hours: 23, minutes: 59, seconds: 59 }),
-          "yyyy-MM-dd'T'HH:mm:ss.SSSxxx",
-          { locale: localeId }
-        );
+        endDate = formatDateEnd(args[2]);
         console.log(startDate, endDate);
 
         filterCondition = {
@@ -89,16 +80,8 @@ export const exportFileCommand = async (ctx: Context) => {
         }
 
         // startDate 00:00:00 and endDate 23:59:59 to locale id-ID
-        startDate = format(
-          set(new Date(args[2]), { hours: 0, minutes: 0, seconds: 0 }),
-          "yyyy-MM-dd'T'HH:mm:ss.SSSxxx",
-          { locale: localeId }
-        );
-        endDate = format(
-          set(new Date(args[3]), { hours: 23, minutes: 59, seconds: 59 }),
-          "yyyy-MM-dd'T'HH:mm:ss.SSSxxx",
-          { locale: localeId }
-        );
+        startDate = formatDateStart(args[2]);
+        endDate = formatDateEnd(args[3]);
         console.log(startDate, endDate);
         filterCondition = {
           type: "startDateEndDate",
@@ -125,16 +108,8 @@ export const exportFileCommand = async (ctx: Context) => {
           return;
         }
         // startDate 00:00:00 and endDate 23:59:59 to locale id-ID
-        startDate = format(
-          set(new Date(args[4]), { hours: 0, minutes: 0, seconds: 0 }),
-          "yyyy-MM-dd'T'HH:mm:ss.SSSxxx",
-          { locale: localeId }
-        );
-        endDate = format(
-          set(new Date(args[4]), { hours: 23, minutes: 59, seconds: 59 }),
-          "yyyy-MM-dd'T'HH:mm:ss.SSSxxx",
-          { locale: localeId }
-        );
+        startDate = formatDateStart(args[4]);
+        endDate = formatDateEnd(args[4]);
         filterCondition = {
           type: "fileCodeDate",
           file_code: args[2],
@@ -152,16 +127,8 @@ export const exportFileCommand = async (ctx: Context) => {
         }
 
         // startDate 00:00:00 and endDate 23:59:59 to locale id-ID
-        startDate = format(
-          set(new Date(args[4]), { hours: 0, minutes: 0, seconds: 0 }),
-          "yyyy-MM-dd'T'HH:mm:ss.SSSxxx",
-          { locale: localeId }
-        );
-        endDate = format(
-          set(new Date(args[5]), { hours: 23, minutes: 59, seconds: 59 }),
-          "yyyy-MM-dd'T'HH:mm:ss.SSSxxx",
-          { locale: localeId }
-        );
+        startDate = formatDateStart(args[4]);
+        endDate = formatDateEnd(args[5]);
         filterCondition = {
           type: "fileCodeDateRange",
           file_code: args[2],
@@ -259,9 +226,7 @@ export const exportFileCommand = async (ctx: Context) => {
     // Isi data untuk kolom baru
     files.forEach((file) => {
       worksheet.addRow({
-        created_at: format(new Date(file.created_at), "dd/MM/yyyy HH:mm:ss", {
-          locale: localeId,
-        }),
+        created_at: formatDateDay(file.created_at),
         file_code: file.file_code,
         file_id: file.file_id,
         // file_name: remove 7 char from behind and add .rar
@@ -298,6 +263,7 @@ export const exportFileCommand = async (ctx: Context) => {
     }
 
     let fileNameExcel = "Data Onimono.xlsx";
+    let firstUpperCase = "";
 
     if (filterCondition.type === "all") {
       fileNameExcel = "Data Onimono - All.xlsx";
@@ -307,13 +273,16 @@ export const exportFileCommand = async (ctx: Context) => {
       fileNameExcel = `Data Onimono - ${args[2]} to ${args[3]}.xlsx`;
     }
     if (filterCondition.type === "fileCodeOnly") {
-      fileNameExcel = `Data Onimono - ${args[2]}.xlsx`;
+      firstUpperCase = args[2].charAt(0).toUpperCase() + args[2].slice(1);
+      fileNameExcel = `Data Onimono - ${firstUpperCase}.xlsx`;
     }
     if (filterCondition.type === "fileCodeDate") {
-      fileNameExcel = `Data Onimono - ${args[2]} - ${args[4]}.xlsx`;
+      firstUpperCase = args[2].charAt(0).toUpperCase() + args[2].slice(1);
+      fileNameExcel = `Data Onimono - ${firstUpperCase} - ${args[4]}.xlsx`;
     }
     if (filterCondition.type === "fileCodeDateRange") {
-      fileNameExcel = `Data Onimono - ${args[2]} - ${args[4]} to ${args[5]}.xlsx`;
+      firstUpperCase = args[2].charAt(0).toUpperCase() + args[2].slice(1);
+      fileNameExcel = `Data Onimono - ${firstUpperCase} - ${args[4]} to ${args[5]}.xlsx`;
     }
     try {
       const buffer = await workbook.xlsx.writeBuffer();
