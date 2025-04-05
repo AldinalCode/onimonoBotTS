@@ -1,10 +1,8 @@
 import { Context } from "telegraf";
-import { format, formatDate, set } from "date-fns";
-import { id as localeId } from "date-fns/locale";
 import ExcelJS from "exceljs";
 
 import { supabase } from "../../lib/supabase";
-import { formatDateDay, formatDateEnd, formatDateStart } from "../../lib/date";
+import { formatDateEnd, formatDateStart, formatDateTime } from "../../lib/date";
 
 export const exportFileCommand = async (ctx: Context) => {
   try {
@@ -217,22 +215,24 @@ export const exportFileCommand = async (ctx: Context) => {
 
     worksheet.columns = [
       { header: "Created At", key: "created_at", width: 30 },
+      { header: "File Name", key: "file_name", width: 50 },
       { header: "File Code", key: "file_code", width: 60 },
       { header: "File ID", key: "file_id", width: 30 },
-      { header: "File Name", key: "file_name", width: 50 }, // Kolom baru
-      { header: "File Link", key: "file_link", width: 50 }, // Kolom baru
+      { header: "File Link", key: "file_link", width: 50 },
+      { header: "Short Link", key: "short_link", width: 50 },
+      { header: "HTML Link", key: "html_link", width: 50 },
     ];
 
     // Isi data untuk kolom baru
     files.forEach((file) => {
       worksheet.addRow({
-        created_at: formatDateDay(file.created_at),
+        created_at: formatDateTime(file.created_at),
+        file_name: file.file_name,
         file_code: file.file_code,
         file_id: file.file_id,
-        // file_name: remove 7 char from behind and add .rar
-        file_name:
-          file.file_code.substring(0, file.file_code.length - 7) + ".rar",
-        file_link: `https://onimonodotcom.blogspot.com/p/download.html?fileCode=${file.file_code}`,
+        file_link: file.file_link,
+        short_link: file.short_link,
+        html_link: `<div><a href="${file.short_link}" target="_blank">${file.file_name}</a></div>`,
       });
     });
 
@@ -243,7 +243,7 @@ export const exportFileCommand = async (ctx: Context) => {
 
     worksheet.autoFilter = {
       from: "A1",
-      to: `E${files.length + 1}`, // Sesuaikan dengan jumlah kolom
+      to: `G${files.length + 1}`, // Sesuaikan dengan jumlah kolom
     };
 
     if (

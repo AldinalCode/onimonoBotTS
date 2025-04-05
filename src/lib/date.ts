@@ -67,3 +67,24 @@ export function formatDateEnd(dateString: string): string {
 
   return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}${timezoneOffset}`;
 }
+
+export function formatDateOnly(dateString: string): string {
+  const date = new Date(dateString);
+  const year = date.getUTCFullYear();
+  const month = String(date.getUTCMonth() + 1).padStart(2, "0"); // Bulan (1-12)
+  const day = String(date.getUTCDate()).padStart(2, "0"); // Tanggal (1-31)
+
+  return `${year}-${month}-${day}`;
+}
+
+export function formatDateTime(dateString: string): string {
+  const date = new Date(dateString);
+  const year = date.getUTCFullYear();
+  const month = String(date.getUTCMonth() + 1).padStart(2, "0"); // Bulan (1-12)
+  const day = String(date.getUTCDate()).padStart(2, "0"); // Tanggal (1-31)
+  const hours = String(date.getUTCHours()).padStart(2, "0"); // Jam (2 digit)
+  const minutes = String(date.getUTCMinutes()).padStart(2, "0"); // Menit (2 digit)
+  const seconds = String(date.getUTCSeconds()).padStart(2, "0"); // Detik (2 digit)
+
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
