@@ -4,7 +4,7 @@ export const helpCommand = async (ctx: Context) => {
   const role = ctx.state.role; // Ambil role dari middleware
 
   if (role === "Admin") {
-    await ctx.replyWithMarkdownV2(
+    await ctx.reply(
       `
 🎮 *Selamat datang, Admin!* 🎮
 
@@ -18,7 +18,7 @@ export const helpCommand = async (ctx: Context) => {
       { parse_mode: "MarkdownV2" }
     );
   } else {
-    await ctx.replyWithMarkdownV2(
+    await ctx.reply(
       `
 🎮 *Selamat datang di OnimonoBot!* 🎮
 
