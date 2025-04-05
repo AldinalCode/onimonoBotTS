@@ -2,22 +2,14 @@ import { Context } from "telegraf";
 import { supabase } from "../../lib/supabase";
 import { format } from "date-fns";
 import { id as localeId } from "date-fns/locale";
+import { safelinku } from "../../lib/safelinku";
 
 export const documentCommand = async (ctx: Context) => {
   try {
-    // Get the user ID
-    const userId = ctx.from?.id;
+    const role = ctx.state.role; // Ambil role dari middleware
 
-    // Search the user in supabase and role is Admin
-    const { data: user, error } = await supabase
-      .from("users")
-      .select("*")
-      .eq("user_id", userId)
-      .eq("role", "Admin")
-      .single();
-
-    // If user is not found, send a message and return
-    if (!user) {
+    // Check if the user is an Admin
+    if (role !== "Admin") {
       await ctx.reply("Anda tidak memiliki izin untuk menggunakan fitur ini.");
       return;
     }
@@ -55,8 +47,13 @@ export const documentCommand = async (ctx: Context) => {
 📂 *File Sudah Ada di Database* 📂
 
 🗓️ *Tanggal*: ${formattedDate}
+📂 *File Name*: \`${file.file_name}\`
 🔑 *File Code*: \`${file.file_code}\`
 🆔 *File ID*: \`${file.file_id}\`
+🔗 *File Link*: [Download](${file.url_file})
+🔗 *Shorted URL*: [Download](${file.shorted_url})
+
+*Note*: File sudah ada di database, tidak perlu disimpan lagi.
   `,
         { parse_mode: "Markdown" }
       );
@@ -72,13 +69,22 @@ export const documentCommand = async (ctx: Context) => {
 
       const fileCode = `${fileName.split(".")[0]}-${randomHex}`;
 
+      // replace space with %20
+      const fileNameEncoded = encodeURIComponent(fileCode);
+      const fileUrl = `https://onimonodotcom.blogspot.com/p/download.html?fileCode=${fileNameEncoded}`;
+
+      const shortedUrl = await safelinku(fileUrl);
+
       const { data: insertFile, error: insertError } = await supabase
         .from("file_storage")
         .insert([
           {
-            file_id: fileId,
-            file_code: fileCode,
             created_at: new Date().toISOString(),
+            file_name: fileName,
+            file_code: fileCode,
+            file_id: fileId,
+            url_file: fileUrl,
+            shorted_url: shortedUrl ?? null,
           },
         ])
         .single();
@@ -94,8 +100,13 @@ export const documentCommand = async (ctx: Context) => {
 ✅ *File Berhasil Disimpan ke Database* ✅
 
 🗓️ *Tanggal*: ${formattedDate}
+📂 *File Name*: \`${fileName}\`
 🔑 *File Code*: \`${fileCode}\`
 🆔 *File ID*: \`${fileId}\`
+🔗 *File Link*: [Download](${fileUrl})
+🔗 *Shorted URL*: [Download](${shortedUrl})
+
+*Note*: File baru saja disimpan ke database.
   `,
         { parse_mode: "Markdown" }
       );

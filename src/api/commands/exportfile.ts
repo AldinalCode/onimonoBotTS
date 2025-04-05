@@ -7,19 +7,10 @@ import { supabase } from "../../lib/supabase";
 
 export const exportFileCommand = async (ctx: Context) => {
   try {
-    // Get the user ID
-    const userId = ctx.from?.id;
+    const role = ctx.state.role; // Ambil role dari middleware
 
-    // Search the user in supabase and role is Admin
-    const { data: user, error } = await supabase
-      .from("users")
-      .select("*")
-      .eq("user_id", userId)
-      .eq("role", "Admin")
-      .single();
-
-    // If user is not found, send a message and return
-    if (!user) {
+    // Check if the user is an Admin
+    if (role !== "Admin") {
       await ctx.reply("Anda tidak memiliki izin untuk menggunakan fitur ini.");
       return;
     }
