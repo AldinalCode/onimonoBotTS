@@ -272,13 +272,17 @@ export const exportFileCommand = async (ctx: Context) => {
       fileNameExcel = `Data Onimono - ${args[2]} to ${args[3]}.xlsx`;
     }
     if (filterCondition.type === "fileCodeOnly") {
-      fileNameExcel = `Data Onimono - ${args[2].toUpperCase}.xlsx`;
+      fileNameExcel = `Data Onimono - ${args[2].toUpperCase()}.xlsx`;
     }
     if (filterCondition.type === "fileCodeDate") {
-      fileNameExcel = `Data Onimono - ${args[2].toUpperCase} - ${args[4]}.xlsx`;
+      fileNameExcel = `Data Onimono - ${args[2].toUpperCase()} - ${
+        args[4]
+      }.xlsx`;
     }
     if (filterCondition.type === "fileCodeDateRange") {
-      fileNameExcel = `Data Onimono - ${args[2].toUpperCase} - ${args[4]} to ${args[5]}.xlsx`;
+      fileNameExcel = `Data Onimono - ${args[2].toUpperCase()} - ${
+        args[4]
+      } to ${args[5]}.xlsx`;
     }
     try {
       const buffer = await workbook.xlsx.writeBuffer();
