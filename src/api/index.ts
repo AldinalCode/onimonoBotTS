@@ -12,7 +12,7 @@ bot.use(getUserRole);
 registerCommands(bot);
 
 // Jalankan bot
-if (process.env.NODE_ENV !== "development") {
+if (process.env.NODE_ENV === "development") {
   bot.launch().then(() => {
     console.log("Bot is running...");
   });
