@@ -51,7 +51,9 @@ export const documentCommand = async (ctx: Context) => {
 🔑 *File Code*: \`${file.file_code}\`
 🆔 *File ID*: \`${file.file_id}\`
 🔗 *File Link*: [Download](${file.url_file})
+\`${file.url_file}\`
 🔗 *Shorted URL*: [Download](${file.shorted_url})
+\`${file.shorted_url}\`
 
 *Note*: File sudah ada di database, tidak perlu disimpan lagi.
   `,
@@ -104,7 +106,9 @@ export const documentCommand = async (ctx: Context) => {
 🔑 *File Code*: \`${fileCode}\`
 🆔 *File ID*: \`${fileId}\`
 🔗 *File Link*: [Download](${fileUrl})
+\`${fileUrl}\`
 🔗 *Shorted URL*: [Download](${shortedUrl})
+\`${shortedUrl}\`
 
 *Note*: File baru saja disimpan ke database.
   `,
