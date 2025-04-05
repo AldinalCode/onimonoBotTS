@@ -2,8 +2,12 @@ import { Telegraf } from "telegraf";
 import { VercelRequest, VercelResponse } from "@vercel/node";
 
 import { registerCommands } from "./commands";
+import { getUserRole } from "../middlewares/auth";
 
 const bot = new Telegraf(process.env.BOT_TOKEN!);
+
+// Middleware untuk mendapatkan role pengguna dari database
+bot.use(getUserRole);
 
 registerCommands(bot);
 
