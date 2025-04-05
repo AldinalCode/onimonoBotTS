@@ -50,9 +50,9 @@ export const documentCommand = async (ctx: Context) => {
 📂 *File Name*: \`${file.file_name}\`
 🔑 *File Code*: \`${file.file_code}\`
 🆔 *File ID*: \`${file.file_id}\`
-🔗 *File Link*: [Download](${file.url_file})
+🔗 *File Link*:
 \`${file.url_file}\`
-🔗 *Shorted URL*: [Download](${file.shorted_url})
+🔗 *Shorted URL*:
 \`${file.shorted_url}\`
 
 *Note*: File sudah ada di database, tidak perlu disimpan lagi.
@@ -81,7 +81,6 @@ export const documentCommand = async (ctx: Context) => {
         .from("file_storage")
         .insert([
           {
-            created_at: new Date().toISOString(),
             file_name: fileName,
             file_code: fileCode,
             file_id: fileId,
@@ -90,6 +89,9 @@ export const documentCommand = async (ctx: Context) => {
           },
         ])
         .single();
+
+      console.log("insertFile", insertFile);
+      console.log("insertError", insertError);
 
       if (insertError) {
         console.error("Error inserting file:", insertError);
@@ -105,9 +107,9 @@ export const documentCommand = async (ctx: Context) => {
 📂 *File Name*: \`${fileName}\`
 🔑 *File Code*: \`${fileCode}\`
 🆔 *File ID*: \`${fileId}\`
-🔗 *File Link*: [Download](${fileUrl})
+🔗 *File Link*:
 \`${fileUrl}\`
-🔗 *Shorted URL*: [Download](${shortedUrl})
+🔗 *Shorted URL*:
 \`${shortedUrl}\`
 
 *Note*: File baru saja disimpan ke database.
