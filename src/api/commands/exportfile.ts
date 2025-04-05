@@ -230,8 +230,8 @@ export const exportFileCommand = async (ctx: Context) => {
         file_name: file.file_name,
         file_code: file.file_code,
         file_id: file.file_id,
-        file_link: file.file_link,
-        short_link: file.short_link,
+        file_link: file.url_file,
+        short_link: file.shorted_url,
         html_link: `<div><a href="${file.short_link}" target="_blank">${file.file_name}</a></div>`,
       });
     });
@@ -263,7 +263,6 @@ export const exportFileCommand = async (ctx: Context) => {
     }
 
     let fileNameExcel = "Data Onimono.xlsx";
-    let firstUpperCase = "";
 
     if (filterCondition.type === "all") {
       fileNameExcel = "Data Onimono - All.xlsx";
@@ -273,16 +272,13 @@ export const exportFileCommand = async (ctx: Context) => {
       fileNameExcel = `Data Onimono - ${args[2]} to ${args[3]}.xlsx`;
     }
     if (filterCondition.type === "fileCodeOnly") {
-      firstUpperCase = args[2].charAt(0).toUpperCase() + args[2].slice(1);
-      fileNameExcel = `Data Onimono - ${firstUpperCase}.xlsx`;
+      fileNameExcel = `Data Onimono - ${args[2].toUpperCase}.xlsx`;
     }
     if (filterCondition.type === "fileCodeDate") {
-      firstUpperCase = args[2].charAt(0).toUpperCase() + args[2].slice(1);
-      fileNameExcel = `Data Onimono - ${firstUpperCase} - ${args[4]}.xlsx`;
+      fileNameExcel = `Data Onimono - ${args[2].toUpperCase} - ${args[4]}.xlsx`;
     }
     if (filterCondition.type === "fileCodeDateRange") {
-      firstUpperCase = args[2].charAt(0).toUpperCase() + args[2].slice(1);
-      fileNameExcel = `Data Onimono - ${firstUpperCase} - ${args[4]} to ${args[5]}.xlsx`;
+      fileNameExcel = `Data Onimono - ${args[2].toUpperCase} - ${args[4]} to ${args[5]}.xlsx`;
     }
     try {
       const buffer = await workbook.xlsx.writeBuffer();
