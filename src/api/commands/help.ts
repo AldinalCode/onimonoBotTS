@@ -15,7 +15,7 @@ export const helpCommand = async (ctx: Context) => {
 - */decrypt* - Dekripsi Judul Halaman
 - */help* - Bantuan
 `,
-      { parse_mode: "MarkdownV2" }
+      { parse_mode: "Markdown" }
     );
   } else {
     await ctx.reply(
@@ -26,7 +26,7 @@ export const helpCommand = async (ctx: Context) => {
 - */download* - Download File
 - */help* - Bantuan
 `,
-      { parse_mode: "MarkdownV2" }
+      { parse_mode: "Markdown" }
     );
   }
 };
