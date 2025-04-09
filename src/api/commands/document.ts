@@ -1,7 +1,7 @@
 import { Context } from "telegraf";
 import { supabase } from "../../lib/supabase";
-import { safelinku } from "../../lib/safelinku";
 import { formatDateDay } from "../../lib/date";
+import { adfocus } from "../../lib/adfocus";
 
 export const documentCommand = async (ctx: Context) => {
   try {
@@ -74,7 +74,7 @@ export const documentCommand = async (ctx: Context) => {
       const fileNameEncoded = encodeURIComponent(fileCode);
       const fileUrl = `https://onimonodotcom.blogspot.com/p/download.html?fileCode=${fileNameEncoded}`;
 
-      const shortedUrl = await safelinku(fileUrl);
+      const shortedUrl = await adfocus(fileUrl);
 
       const { data: insertFile, error: insertError } = await supabase
         .from("file_storage")
