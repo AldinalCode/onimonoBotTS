@@ -17,8 +17,8 @@ export const registerCommands = (bot: Telegraf) => {
   bot.command("exportfile", exportFileCommand);
   bot.command("encrypt", encryptCommand);
   bot.command("decrypt", decryptCommand);
-  bot.command("shortlink", shortlinkCommand);
   if (process.env.NODE_ENV === "development") {
+    bot.command("shortlink", shortlinkCommand);
     bot.command("shortlinkreplace", shortlinkReplaceCommand);
   }
 };
