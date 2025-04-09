@@ -1,55 +1,43 @@
-import chromium from "chrome-aws-lambda";
-import puppeteer from "puppeteer-core";
+import axios from "axios";
 
 export async function safelinku(
   urlDownload: string
 ): Promise<string | undefined> {
-  const browser = await puppeteer.launch({
-    executablePath: await chromium.executablePath,
-    headless: chromium.headless,
-    args: chromium.args,
-  });
+  const url = "https://safelinku.com/api/v1/links";
+  const headers = {
+    Authorization: `Bearer ${process.env.SAFELINKU_TOKEN}`,
+    "Content-Type": "application/json",
+    "User-Agent":
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3",
+    Accept: "application/json",
+  };
+  const body = {
+    url: urlDownload,
+  };
 
-  const page = await browser.newPage();
+  console.log("URL:", url);
+  console.log("Headers:", headers);
+  console.log("Body:", body);
 
   try {
-    await page.goto("https://safelinku.com/api/v1/links", {
-      waitUntil: "networkidle2",
-    });
+    const response = await axios.post(url, body, { headers });
+    console.log("Response Status:", response.status);
+    console.log("Response Data:", response.data);
 
-    await page.setRequestInterception(true);
-    page.on("request", (request) => {
-      if (request.url() === "https://safelinku.com/api/v1/links") {
-        console.log("Intercepting request to:", request.url());
-        request.continue({
-          method: "POST",
-          postData: JSON.stringify({ url: urlDownload }),
-          headers: {
-            Authorization: `Bearer ${process.env.SAFELINKU_TOKEN}`,
-            "Content-Type": "application/json",
-            "User-Agent":
-              "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3",
-          },
-        });
-      } else {
-        request.continue();
-      }
-    });
-
-    const response = await page.waitForResponse(
-      (response) =>
-        response.url() === "https://safelinku.com/api/v1/links" &&
-        response.status() === 200,
-      { timeout: 10000 }
-    );
-    const data = await response.json();
-    console.log("Response data:", data);
-
-    await browser.close();
-    return data.url;
+    if (response.status === 201 && response.data && response.data.url) {
+      const data = response.data;
+      const shortLink = data.url;
+      return shortLink;
+    }
   } catch (error) {
-    console.error("Error with Puppeteer:", error);
-    await browser.close();
-    return undefined;
+    if (axios.isAxiosError(error)) {
+      console.error(
+        "Axios Error:",
+        error.response?.status,
+        error.response?.data
+      );
+    } else {
+      console.error("Error fetching data:", error);
+    }
   }
 }
