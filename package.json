@@ -25,12 +25,9 @@
     "@supabase/supabase-js": "^2.49.4",
     "@vercel/node": "^5.1.14",
     "axios": "^1.8.4",
-    "chrome-aws-lambda": "^10.1.0",
     "date-fns": "^4.1.0",
     "dotenv": "^16.4.7",
     "exceljs": "^4.4.0",
-    "puppeteer": "^24.6.0",
-    "puppeteer-core": "^24.6.0",
     "telegraf": "^4.16.3",
     "vercel": "^41.4.1"
   }
