@@ -1,10 +1,12 @@
-import axios from "axios";
 import puppeteer from "puppeteer";
 
 export async function safelinku(
   urlDownload: string
 ): Promise<string | undefined> {
-  const browser = await puppeteer.launch({ headless: true });
+  const browser = await puppeteer.launch({
+    headless: true,
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+  });
   const page = await browser.newPage();
 
   try {
@@ -15,6 +17,7 @@ export async function safelinku(
     await page.setRequestInterception(true);
     page.on("request", (request) => {
       if (request.url() === "https://safelinku.com/api/v1/links") {
+        console.log("Intercepting request to:", request.url());
         request.continue({
           method: "POST",
           postData: JSON.stringify({ url: urlDownload }),
@@ -31,9 +34,13 @@ export async function safelinku(
     });
 
     const response = await page.waitForResponse(
-      "https://safelinku.com/api/v1/links"
+      (response) =>
+        response.url() === "https://safelinku.com/api/v1/links" &&
+        response.status() === 200,
+      { timeout: 10000 }
     );
     const data = await response.json();
+    console.log("Response data:", data);
 
     await browser.close();
     return data.url;

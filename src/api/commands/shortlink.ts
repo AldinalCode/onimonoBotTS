@@ -3,7 +3,7 @@ import { safelinku } from "../../lib/safelinku";
 import { supabase } from "../../lib/supabase";
 
 export const shortlinkCommand = async (ctx: Context) => {
-  const role = ctx.state.role; // Ambil role dari middleware
+  const role = ctx.state.role || "Guest"; // Ambil role dari middleware
 
   // Check if the user is an Admin
   if (role !== "Admin") {
@@ -16,10 +16,8 @@ export const shortlinkCommand = async (ctx: Context) => {
     ctx.message && "text" in ctx.message ? ctx.message.text.split(" ") : [];
   if (args.length > 1) {
     await ctx.reply(
-      `Format yang benar hanya ketikkan */shortlink* tanpa argumen`,
-      {
-        parse_mode: "Markdown",
-      }
+      `Format yang benar: cukup ketikkan */shortlink* tanpa argumen tambahan.`,
+      { parse_mode: "Markdown" }
     );
     return;
   }
