@@ -1,12 +1,15 @@
-import puppeteer from "puppeteer";
+import chromium from "chrome-aws-lambda";
+import puppeteer from "puppeteer-core";
 
 export async function safelinku(
   urlDownload: string
 ): Promise<string | undefined> {
   const browser = await puppeteer.launch({
-    headless: true,
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    executablePath: await chromium.executablePath,
+    headless: chromium.headless,
+    args: chromium.args,
   });
+
   const page = await browser.newPage();
 
   try {

@@ -17,6 +17,9 @@ importers:
       axios:
         specifier: ^1.8.4
         version: 1.8.4
+      chrome-aws-lambda:
+        specifier: ^10.1.0
+        version: 10.1.0(puppeteer-core@24.6.0)
       date-fns:
         specifier: ^4.1.0
         version: 4.1.0
@@ -29,6 +32,9 @@ importers:
       puppeteer:
         specifier: ^24.6.0
         version: 24.6.0(typescript@5.8.2)
+      puppeteer-core:
+        specifier: ^24.6.0
+        version: 24.6.0
       telegraf:
         specifier: ^4.16.3
         version: 4.16.3
@@ -530,6 +536,12 @@ packages:
   chownr@3.0.0:
     resolution: {integrity: sha512-+IxzY9BZOQd/XuYPRmrvEVjF/nqj5kgT4kEq7VofrDoM1MxoRjEWkrCC3EtLi59TVawxTAn+orJwFQcrqEN1+g==}
     engines: {node: '>=18'}
+
+  chrome-aws-lambda@10.1.0:
+    resolution: {integrity: sha512-NZQVf+J4kqG4sVhRm3WNmOfzY0OtTSm+S8rg77pwePa9RCYHzhnzRs8YvNI6L9tALIW6RpmefWiPURt3vURXcw==}
+    engines: {node: '>= 10.16'}
+    peerDependencies:
+      puppeteer-core: ^10.1.0
 
   chromium-bidi@3.0.0:
     resolution: {integrity: sha512-ZOGRDAhBMX1uxL2Cm2TDuhImbrsEz5A/tTcVU6RpXEWaTNUNwsHW6njUXizh51Ir6iqHbKAfhA2XK33uBcLo5A==}
@@ -1121,6 +1133,13 @@ packages:
 
   jszip@3.10.1:
     resolution: {integrity: sha512-xXDvecyTpGLrqFrvkrUSoxxfJI5AH7U8zxxtVclpsUtMCq4JQ290LY8AW5c7Ggnr/Y/oK+bQMbqK2qmtk3pN4g==}
+
+  lambdafs@2.1.1:
+    resolution: {integrity: sha512-x5k8JcoJWkWLvCVBzrl4pzvkEHSgSBqFjg3Dpsc4AcTMq7oUMym4cL/gRTZ6VM4mUMY+M0dIbQ+V1c1tsqqanQ==}
+    engines: {node: '>= 10.16'}
+    hasBin: true
+    bundledDependencies:
+      - tar-fs
 
   lazystream@1.0.1:
     resolution: {integrity: sha512-b94GiNHQNy6JNTrt5w6zNyffMrNkXZb3KTkCZJb2V1xaEGCk093vkZ2jk3tpaeP33/OiXC+WvK9AxUebnf5nbw==}
@@ -2490,6 +2509,11 @@ snapshots:
 
   chownr@3.0.0: {}
 
+  chrome-aws-lambda@10.1.0(puppeteer-core@24.6.0):
+    dependencies:
+      lambdafs: 2.1.1
+      puppeteer-core: 24.6.0
+
   chromium-bidi@3.0.0(devtools-protocol@0.0.1425554):
     dependencies:
       devtools-protocol: 0.0.1425554
@@ -3037,6 +3061,8 @@ snapshots:
       pako: 1.0.11
       readable-stream: 2.3.8
       setimmediate: 1.0.5
+
+  lambdafs@2.1.1: {}
 
   lazystream@1.0.1:
     dependencies:
